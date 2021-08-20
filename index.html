@@ -18,8 +18,9 @@
             <v-col cols="12">
               <v-card>
                 <v-card-text>
+                    aaa
                     <form class="form-inline">
-                        共通テストで<v-text-field v-model="CommonTest.expectedPoint"></v-text-field>点とれたとすると
+                        共通テストで<v-text-field v-model="commonTest.expectedPoint"></v-text-field>点とれたとすると
                     </form>
                 </v-card-text>
               </v-card>
@@ -108,7 +109,8 @@
               edit: {
                 item: {},
                 dialog: false,
-              }
+              },
+              expextedPoint: 630
             },
             secondTest: {
               schoolName: "",
