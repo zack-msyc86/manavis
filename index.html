@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <!-- <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?> -->
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <div id="app">
+    　<v-app>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <v-card>
+                
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <!-- 共通テスト -->
+            <v-col cols="6">
+              <v-card>
+                <v-card-title>共通テスト</v-card-title>
+                <v-card-text>
+                  <p>合計: {{commonTestPointSum}}点</p>
+                  <v-data-table :items="commonTest.subjects" :headers="subjectsHeaders">
+                    <template v-slot:[`item.menu`]="{ item }">
+                      <v-icon @click="editCommonTestSubject(item)">mdi-pencil</v-icon>
+                      <v-icon @click="deleteCommonTestSubject(item)">mdi-minus</v-icon>
+                    </template>
+                  </v-data-table>
+                  <v-btn rounded class="float-right"><v-icon @click="buildCommonTestSubject">mdi-plus</v-icon></v-btn>
+                </v-card-text>
+                <v-card-text>
+                  <v-text-field v-model="commonTest.border" label="ボーダー (%)"　type="number"></v-text-field>
+                </v-card-text>
+              </v-card>
+              <v-dialog v-model="commonTest.edit.dialog" width="380">
+                <v-card>
+                  <v-card-title>編集</v-card-title>
+                  <v-card-text>
+                    <v-text-field v-model="commonTest.edit.item.name" label="科目名"></v-text-field>
+                    <v-text-field v-model="commonTest.edit.item.point" label="得点" type="number"></v-text-field>
+                    <v-btn block color="primary" @click="saveCommonTestSubject">保存</v-btn>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-col>
+
+            <!-- 二次試験配点 -->
+            <v-col cols="6">
+              <v-card>
+                <v-card-title>二次試験</v-card-title>
+                <v-card-text>
+                  <p>合計: {{secondTestPointSum}}点</p>
+                  <v-data-table :items="secondTest.subjects" :headers="subjectsHeaders">
+                    <template v-slot:[`item.menu`]="{ item }">
+                      <v-icon @click="editSecondTestSubject(item)">mdi-pencil</v-icon>
+                      <v-icon @click="deleteSecondTestSubject(item)">mdi-minus</v-icon>
+                    </template>
+                  </v-data-table>
+                  <v-btn rounded class="float-right"><v-icon @click="buildSecondTestSubject">mdi-plus</v-icon></v-btn>
+                </v-card-text>
+                <v-card-subtitle>去年のデータ</v-card-subtitle>
+                <v-card-text>
+                  <v-text-field v-model="secondTest.previousData.highest" label="合格最高点" type="number"></v-text-field>
+                  <v-text-field v-model="secondTest.previousData.average" label="合格者平均点" type="number"></v-text-field>
+                  <v-text-field v-model="secondTest.previousData.lowest" label="合格最低点" type="number"></v-text-field>
+                </v-card-text>
+              </v-card>
+              <v-dialog v-model="secondTest.edit.dialog" width="380">
+                <v-card>
+                  <v-card-title>編集</v-card-title>
+                  <v-card-text>
+                    <v-text-field v-model="secondTest.edit.item.name" label="科目名"></v-text-field>
+                    <v-text-field v-model="secondTest.edit.item.point" label="得点" type="number"></v-text-field>
+                    <v-btn block color="primary" @click="saveSecondTestSubject">保存</v-btn>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-col>
+          </v-row>
+        </v-container>
+    　</v-app>
+    </div>
+    <script>
+      const app = new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data(){
+          return {
+            commonTest: {
+              subjects: [
+                { name: '英語R', point: 100 },
+                { name: '英語L', point: 100 },
+              ],
+              border: 70,
+              edit: {
+                item: {},
+                dialog: false,
+              }
+            },
+            secondTest: {
+              schoolName: "",
+              subjects: [
+                { name: '英語', point: 500 },
+              ],
+              previousData: { lowest: 1400, highest: 1700, average: 1500 },
+              edit: {
+                item: {},
+                dialog: false,
+              }
+            },
+            subjectsHeaders: [
+              { text: 'Name', value: 'name'},
+              { text: 'Point', value: 'point'},
+              { text: 'Menu', value: 'menu'},
+            ],
+          }
+        },
+        methods: {
+          buildCommonTestSubject(){
+            this.commonTest.edit.item = {}
+            this.commonTest.edit.dialog = true
+          },
+          editCommonTestSubject(item){
+            this.commonTest.edit.item = item
+            this.commonTest.edit.dialog = true
+          },
+          saveCommonTestSubject(){
+            if(!this.commonTest.subjects.map(s => s.name).includes(this.commonTest.edit.item.name)){
+              this.commonTest.subjects.push(this.commonTest.edit.item)
+            }
+            this.commonTest.edit.dialog = false
+          },
+          deleteCommonTestSubject(item){
+            const index = this.commonTest.subjects.indexOf(item)
+            this.commonTest.subjects.splice(index, 1)
+          },
+          buildSecondTestSubject(){
+            this.secondTest.edit.item = {}
+            this.secondTest.edit.dialog = true
+          },
+          editSecondTestSubject(item){
+            this.secondTest.edit.item = item
+            this.secondTest.edit.dialog = true
+          },
+          saveSecondTestSubject(){
+            if(!this.secondTest.subjects.map(s => s.name).includes(this.secondTest.edit.item.name)){
+              this.secondTest.subjects.push(this.secondTest.edit.item)
+            }
+            this.secondTest.edit.dialog = false
+          },
+          deleteSecondTestSubject(item){
+            const index = this.secondTest.subjects.indexOf(item)
+            this.secondTest.subjects.splice(index, 1)
+          }
+        },
+        computed: {
+          commonTestPointSum(){ return this.commonTest.subjects.reduce((sum, element) => sum + element.point, 0) },
+          secondTestPointSum(){ return this.secondTest.subjects.reduce((sum, element) => sum + element.point, 0) },
+        },
+        created(){
+          console.log("test")
+        }
+      });
+    </script>
+  </body>
+</html>
