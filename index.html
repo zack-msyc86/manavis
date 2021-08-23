@@ -106,7 +106,7 @@
               </v-dialog>
             </v-col>
           </v-row>
-          <v-dialog>
+          <v-dialog @click:outside="password = ''">
             <template v-slot:activator="{on, attr}">
               <v-btn v-on="on" v-bind="attr">スタッフ用ページ</v-btn>
             </template>
