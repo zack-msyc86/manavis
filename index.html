@@ -29,6 +29,7 @@
             <v-col cols="12" md="6">
               <v-card>
                 <v-card-text>
+                  <v-text-field v-model="commonTest.expectedPoint" label="共通テスト予想点数" :hint="'ボーダー: '+String(commonTestBorderPoint)" type="number"></v-text-field>
                   <p>2次試験では合格者平均に達するには{{requiredSecondTestPoint}}点必要になる</p>
                   <div v-for="s in secondTest.subjects" :key="s.name">
                     <h3>{{s.name}}</h3>
@@ -58,7 +59,6 @@
                 </v-card-text>
                 <v-card-text>
                   <v-text-field v-model="commonTest.border" label="ボーダー (%)"　type="number"></v-text-field>
-                  <v-text-field v-model="commonTest.expectedPoint" label="予想点数" :hint="'ボーダー: '+String(commonTestBorderPoint)" type="number"></v-text-field>
                 </v-card-text>
               </v-card>
               <v-dialog v-model="commonTest.edit.dialog" width="380">
@@ -164,6 +164,13 @@
                   <v-btn class="mx-auto" @click="loadStudent">生徒情報と学校情報を読み出し</v-btn>
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
                 </v-card-actions>
+                <v-card-text>
+                  <v-data-table :items="schoolNames.map(sn => ({name: sn})" headers="[{ text: 'Name', value: 'name'}, { text: 'Menu', value: 'menu'}]">
+                    <template v-slot:[`item.menu`]="{item}">
+                      <v-icon @click="deleteSchool(item.name)">mdi-minus</v-icon>
+                    </template>
+                  </v-data-table>
+                </v-card-text>
               </div>
             </v-card>
           </v-dialog>
@@ -314,6 +321,12 @@
               this.secondTest.previousData = school.secondTest.previousData
             })
             this.notice(`${this.schoolName}を読み出しました`)
+          },
+          deleteSchool(sn){
+            if(!confirm(`本当に${sn}を削除しますか？`)){return}
+            this.db.schools.delete(sn)
+            this.notice("削除しました")
+            this.updateSchoolNames()
           },
           loadStudent(){
             if(this.studentID == ""){
