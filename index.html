@@ -29,7 +29,7 @@
             <v-col cols="12" md="6">
               <v-card>
                 <v-card-text>
-                  <p>2次試験では{{requiredSecondTestPoint}}点必要になる</p>
+                  <p>2次試験では合格者平均に達するには{{requiredSecondTestPoint}}点必要になる</p>
                   <div v-for="s in secondTest.subjects" :key="s.name">
                     <h3>{{s.name}}</h3>
                     <v-text-field v-model="s.expectedPoint" label="目標点数" type="number"></v-text-field>
@@ -118,7 +118,7 @@
               <div v-else>
                 <v-card-text >
                   <v-text-field v-model="studentID" label="マナビス生番号"></v-text-field>
-                  <v-autocomplete v-model="schoolName" :items="schoolNames" label="学校名"/></v-autocomplete>
+                  <v-combobox v-model="schoolName" :items="schoolNames" label="学校名"/></v-combobox>
                 </v-card-text>
                 <v-card-actions>
                   <v-btn class="mx-auto" @click="saveStudent">保存（個別情報と学校）</v-btn>
@@ -154,6 +154,12 @@
               subjects: [
                 { name: '英語R', point: 100 },
                 { name: '英語L', point: 100 },
+                { name: '国語', point: 200 },
+                { name: '数学IA', point: 100 },
+                { name: '数学IIB', point: 100 },
+                { name: '物理', point: 100 },
+                { name: '化学', point: 100 },
+                { name: '公民', point: 100 },
               ],
               border: 70,
               edit: {
