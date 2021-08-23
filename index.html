@@ -19,16 +19,10 @@
             <v-col cols="12" md="6">
               <v-card>
                 <v-card-text>
-                  <v-text-field v-model="studentID" label="マナビス生番号"></v-text-field>
                   <v-autocomplete v-model="schoolName" :items="schoolNames" label="学校名"/></v-autocomplete>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn class="mx-auto" @click="saveStudent">保存（個別情報と学校）</v-btn>
-                  <v-btn class="mx-auto" @click="saveSchool">配点等のみ保存（学校ごと）</v-btn>
-                </v-card-actions>
-                <v-card-actions>
-                  <v-btn class="mx-auto" @click="loadStudent">生徒情報と学校情報を読み出し</v-btn>
-                  <v-btn class="mx-auto" @click="loadSchool">学校情報のみ読み出し</v-btn>
+                  <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -112,6 +106,31 @@
               </v-dialog>
             </v-col>
           </v-row>
+          <v-dialog>
+            <template v-slot:activator="{on, attr}">
+              <v-btn v-on="on" v-bint="attr">スタッフ用ページ</v-btn>
+            </template>
+            <v-card>
+              <v-card-title>スタッフ用メニュー</v-card-title>
+              <v-card-text v-if="password != 12317">
+                <v-text-field v-model="password"></v-text-field>
+              </v-card-text>
+              <div v-else>
+                <v-card-text >
+                  <v-text-field v-model="studentID" label="マナビス生番号"></v-text-field>
+                  <v-autocomplete v-model="schoolName" :items="schoolNames" label="学校名"/></v-autocomplete>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn class="mx-auto" @click="saveStudent">保存（個別情報と学校）</v-btn>
+                  <v-btn class="mx-auto" @click="saveSchool">配点等のみ保存（学校ごと）</v-btn>
+                </v-card-actions>
+                <v-card-actions>
+                  <v-btn class="mx-auto" @click="loadStudent">生徒情報と学校情報を読み出し</v-btn>
+                  <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
+                </v-card-actions>
+            </div>
+            </v-card>
+          </v-dialog>
         </v-container>
     　</v-app>
     </div>
@@ -127,6 +146,7 @@
         data(){
           return {
             db: db.db,
+            password: "",
             schoolName: "",
             schoolNames: [],
             studentID: "",
