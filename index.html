@@ -19,7 +19,7 @@
             <v-col cols="12" md="6">
               <v-card>
                 <v-card-text>
-                  <v-combobox v-model="schoolName" :items="schoolNames" label="学校名"/></v-combobox>
+                  <v-autocomplete v-model="schoolName" :items="schoolNames" label="学校名"/></v-autocomplete>
                 </v-card-text>
                 <v-card-actions>
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
