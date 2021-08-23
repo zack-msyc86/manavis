@@ -106,6 +106,42 @@
               </v-dialog>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-card>
+                <v-card-title>使い方</v-card-title>
+                <v-card-subtitle>生徒向け</v-card-subtitle>
+                <v-card-text>
+                  <p>
+                    大学・学部学科・受験方法等を一番上のカードで入力して、読み出しをする
+                  </p>
+                  <p>
+                    大学データがない場合は
+                    <ul>
+                      <li>共通テストの科目・配点・ボーダー・予想点数を入力する</li>
+                      <li>二次試験の科目・配点と過去の合格者平均等を入力する</li>
+                    </ul>
+                  </p>
+                  <p>
+                    2番目のカードに目標点数とメモを書いて得点戦略を具体化する
+                  </p>
+                </v-card-text>
+                <v-card-subtitle>スタッフ向け</v-card-subtitle>
+                <v-card-text>
+                  スタッフ向けメニューを開く（パスワードが必要）
+                  <p>
+                    大学名・学部学科・受験方法等、科目等が識別できるように学校名を入れる<br/>
+                    例：○○大学○○学部○○学科前期日程数学選択<br/>
+                    配点等のみを保存し、再利用できる。
+                  </p>
+                  <p>
+                    マナビス生番号を入れて保存すると、生徒固有の配点戦略とメモ、学校情報の両方が保存される。
+                    マナビス生番号を入れて読み出すと、生徒固有の配点戦略とメモ、学校情報の両方が読み出される。
+                  </p>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
           <v-dialog @click:outside="password = ''">
             <template v-slot:activator="{on, attr}">
               <v-btn v-on="on" v-bind="attr" class="mt-3">スタッフ用ページ</v-btn>
