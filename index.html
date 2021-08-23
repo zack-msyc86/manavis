@@ -11,17 +11,37 @@
   <body>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/dexie@3.0.2/dist/dexie.min.js"></script>
     <div id="app">
     　<v-app>
         <v-container>
-          <v-row>
-            <v-col cols="12">
+          <v-row justify="center">
+            <v-col cols="6">
               <v-card>
                 <v-card-text>
-                    aaa
-                    <form class="form-inline">
-                        共通テストで<v-text-field v-model="commonTest.expectedPoint"></v-text-field>点とれたとすると
-                    </form>
+                  <v-text-field v-model="studentID" label="マナビス生番号"></v-text-field>
+                  <v-autocomplete v-model="schoolName" :items="schoolNames" label="学校名"/></v-autocomplete>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn class="mx-auto" @click="saveStudent">保存（個別情報と学校）</v-btn>
+                  <v-btn class="mx-auto" @click="saveSchool">配点等のみ保存（学校ごと）</v-btn>
+                </v-card-actions>
+                <v-card-actions>
+                  <v-btn class="mx-auto" @click="loadStudent">生徒情報と学校情報を読み出し</v-btn>
+                  <v-btn class="mx-auto" @click="loadSchool">学校情報のみ読み出し</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+            <v-col cols="6">
+              <v-card>
+                <v-card-text>
+                  <p>2次試験では{{requiredSecondTestPoint}}点必要になる</p>
+                  <div v-for="s in secondTest.subjects" :key="s.name">
+                    <h3>{{s.name}}</h3>
+                    <v-text-field v-model="s.expectedPoint" label="目標点数" type="number"></v-text-field>
+                    <v-textarea v-model="s.memo" label="メモ" type="number" rows="3"></v-textarea>
+                  </div>
+                  合計{{secondTestExpectedPointSum}}点
                 </v-card-text>
               </v-card>
             </v-col>
@@ -44,6 +64,7 @@
                 </v-card-text>
                 <v-card-text>
                   <v-text-field v-model="commonTest.border" label="ボーダー (%)"　type="number"></v-text-field>
+                  <v-text-field v-model="commonTest.expectedPoint" label="予想点数" :hint="String(commonTestBorderPoint)"></v-text-field>
                 </v-card-text>
               </v-card>
               <v-dialog v-model="commonTest.edit.dialog" width="380">
@@ -95,11 +116,20 @@
     　</v-app>
     </div>
     <script>
+      const db = new Dexie("manavis").version(1);
+      db.stores({
+        students: 'id',
+        schools: 'name'
+      })
       const app = new Vue({
         el: '#app',
         vuetify: new Vuetify(),
         data(){
           return {
+            db: db.db,
+            schoolName: "",
+            schoolNames: [],
+            studentID: "",
             commonTest: {
               subjects: [
                 { name: '英語R', point: 100 },
@@ -110,18 +140,17 @@
                 item: {},
                 dialog: false,
               },
-              expextedPoint: 630
+              expectedPoint: 630,
             },
             secondTest: {
-              schoolName: "",
               subjects: [
-                { name: '英語', point: 500 },
+                { name: '英語', point: 500, expectedPoint: 400, memo: "" },
               ],
               previousData: { lowest: 1400, highest: 1700, average: 1500 },
               edit: {
                 item: {},
                 dialog: false,
-              }
+              },
             },
             subjectsHeaders: [
               { text: 'Name', value: 'name'},
@@ -166,14 +195,84 @@
           deleteSecondTestSubject(item){
             const index = this.secondTest.subjects.indexOf(item)
             this.secondTest.subjects.splice(index, 1)
-          }
+          },
+          saveStudent(){
+            if(this.studentID == "" || this.schoolName == ""){
+              console.log("student id empty")
+              alert("生徒番号か学校名が空です")
+              return
+            }
+            this.saveSchool()
+            this.db.students.put({
+              id: this.studentID,
+              schoolName: this.schoolName,
+              secondTestSubjects: this.secondTest.subjects.map(s => ({ name: s.name, expectedPoint: s.expectedPoint, memo: s.memo })),
+              commonTestExpectedPoint: this.commonTest.expectedPoint
+            })
+            this.db.students.get(this.studentID, student => console.log(student))
+          },
+          saveSchool(){
+            if(this.schoolName == ""){
+              alert("学校名が空です")
+              return
+            }
+            this.db.schools.put({
+              name: this.schoolName,
+              commonTest: {
+                subjects: this.commonTest.subjects,
+                border: this.commonTest.border
+              },
+              secondTest: {
+                subjects: this.secondTest.subjects.map(s => ({ name: s.name, point: s.point})),
+                previousData: this.secondTest.previousData
+              }
+            })
+            this.db.schools.get(this.schoolName, s => console.log(s))
+            this.updateSchoolNames()
+          },
+          loadSchool(){
+            if(this.schoolName == ""){
+              alert("学校名が空です")
+              return
+            }
+            return this.db.schools.get(this.schoolName, school => {
+              this.commonTest.subjects = school.commonTest.subjects
+              this.commonTest.border = school.commonTest.border
+              this.secondTest.subjects = school.secondTest.subjects.map(s => ({...s, expectedPoint: s.point*0.6, memo: ""}))
+              this.secondTest.previousData = school.secondTest.previousData
+            })
+          },
+          loadStudent(){
+            if(this.studentID == ""){
+              console.log("student id empty")
+              alert("生徒番号が空です")
+              return
+            }
+            this.db.students.get(this.studentID, student => {
+              this.schoolName = student.schoolName
+              this.loadSchool().then(() => {
+                this.secondTest.subjects.forEach( s => {
+                  const d = student.secondTestSubjects.find(sts => s.name == sts.name)
+                  s.expectedPoint = d.expectedPoint
+                  s.memo = d.memo
+                })
+                this.commonTest.expectedPoint = student.commonTestExpectedPoint
+              })
+            })
+          },
+          updateSchoolNames(){
+            this.db.schools.toArray(vals => this.schoolNames = vals.map(v => v.name))
+          },
         },
         computed: {
-          commonTestPointSum(){ return this.commonTest.subjects.reduce((sum, element) => sum + element.point, 0) },
-          secondTestPointSum(){ return this.secondTest.subjects.reduce((sum, element) => sum + element.point, 0) },
+          commonTestPointSum(){ return this.commonTest.subjects.reduce((sum, element) => sum + Number(element.point), 0) },
+          secondTestPointSum(){ return this.secondTest.subjects.reduce((sum, element) => sum + Number(element.point), 0) },
+          secondTestExpectedPointSum(){ return this.secondTest.subjects.reduce((sum, element) => sum + Number(element.expectedPoint), 0) },
+          commonTestBorderPoint(){ return this.commonTestPointSum*this.commonTest.border/100 },
+          requiredSecondTestPoint(){ return this.secondTest.previousData.average - this.commonTest.expectedPoint },
         },
         created(){
-          console.log("test")
+          this.updateSchoolNames()
         }
       });
     </script>
