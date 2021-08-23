@@ -58,7 +58,7 @@
                 </v-card-text>
                 <v-card-text>
                   <v-text-field v-model="commonTest.border" label="ボーダー (%)"　type="number"></v-text-field>
-                  <v-text-field v-model="commonTest.expectedPoint" label="予想点数" :hint="String(commonTestBorderPoint)"></v-text-field>
+                  <v-text-field v-model="commonTest.expectedPoint" label="予想点数" :hint="'ボーダー: '+String(commonTestBorderPoint)"></v-text-field>
                 </v-card-text>
               </v-card>
               <v-dialog v-model="commonTest.edit.dialog" width="380">
