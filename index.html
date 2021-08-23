@@ -132,6 +132,9 @@
             </v-card>
           </v-dialog>
         </v-container>
+        <v-snackbar v-model="snackbar.value">
+          {{snackbar.text}}
+        </v-snackbar>
     　</v-app>
     </div>
     <script>
@@ -184,6 +187,10 @@
               { text: 'Point', value: 'point'},
               { text: 'Menu', value: 'menu'},
             ],
+            snackbar: {
+              value: false,
+              text: "",
+            }
           }
         },
         methods: {
@@ -237,6 +244,7 @@
               commonTestExpectedPoint: this.commonTest.expectedPoint
             })
             this.db.students.get(this.studentID, student => console.log(student))
+            this.notice(`${this.studentID}を保存しました`)
           },
           saveSchool(){
             if(this.schoolName == ""){
@@ -256,6 +264,7 @@
             })
             this.db.schools.get(this.schoolName, s => console.log(s))
             this.updateSchoolNames()
+            this.notice(`${this.schoolName}を保存しました`)
           },
           loadSchool(){
             if(this.schoolName == ""){
@@ -268,6 +277,7 @@
               this.secondTest.subjects = school.secondTest.subjects.map(s => ({...s, expectedPoint: s.point*0.6, memo: ""}))
               this.secondTest.previousData = school.secondTest.previousData
             })
+            this.notice(`${this.schoolName}を読み出しました`)
           },
           loadStudent(){
             if(this.studentID == ""){
@@ -286,10 +296,15 @@
                 this.commonTest.expectedPoint = student.commonTestExpectedPoint
               })
             })
+            this.notice(`${this.studentID}を読み出しました`)
           },
           updateSchoolNames(){
             this.db.schools.toArray(vals => this.schoolNames = vals.map(v => v.name))
           },
+          notice(message){
+            this.snackbar.value = true
+            this.snackbar.text = message
+          }
         },
         computed: {
           commonTestPointSum(){ return this.commonTest.subjects.reduce((sum, element) => sum + Number(element.point), 0) },
