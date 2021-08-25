@@ -355,7 +355,7 @@
             this.notice(`${this.studentID}を読み出しました`)
           },
           updateSchoolNames(){
-            this.db.schools.toArray(vals => this.schoolNames = vals.map(v => v.name))
+            return this.db.schools.toArray(vals => this.schoolNames = vals.map(v => v.name))
           },
           notice(message){
             this.snackbar.value = true
@@ -382,18 +382,17 @@
             }
           }
         },
-        mounted(){
-          this.updateSchoolNames()
+        async mounted(){
+          await this.updateSchoolNames()
           const importData = getUrlQueries().school
           if(!!importData){
             data = JSON.parse(importData)
             console.log(this.schoolNames, data.name)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
-              this.db.schools.put(data).then(() => {
-                this.updateSchoolNames()
-                alert(`${data.name}を読み込みました`)
-                window.location.href = getPathFromUrl(document.location.href)
-              })
+              await this.db.schools.put(data)
+              await this.updateSchoolNames()
+              alert(`${data.name}を読み込みました`)
+              window.location.href = getPathFromUrl(document.location.href)
             }
           }
         }
