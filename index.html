@@ -387,8 +387,8 @@
           console.log(getUrlQueries())
           const importData = getUrlQueries().school
           if(!!importData){
-            console.log(importData)
             data = JSON.parse(importData)
+            console.log(data)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
               this.db.schools.put(data)
               alert(`${data.name}を読み込みました`)
