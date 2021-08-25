@@ -389,10 +389,11 @@
             data = JSON.parse(importData)
             console.log(data)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
-              this.db.schools.put(data)
-              this.updateSchoolNames()
-              alert(`${data.name}を読み込みました`)
-              window.location.href = getPathFromUrl(document.location.href)
+              this.db.schools.put(data).then(() => {
+                this.updateSchoolNames()
+                alert(`${data.name}を読み込みました`)
+                window.location.href = getPathFromUrl(document.location.href)
+              })
             }
           }
         }
