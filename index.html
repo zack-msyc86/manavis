@@ -396,6 +396,7 @@
           }
         },
         async mounted(){
+          console.log("v1")
           await this.updateSchoolNames()
           this.nextTick(() => {
             this.importSchoolData()
