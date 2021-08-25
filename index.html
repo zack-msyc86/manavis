@@ -24,12 +24,12 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
-                  <v-dialog>
+                  <v-dialog width="340">
                     <template v-slot:activator="{on, attr}">
                       <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
-                      <qriously :value="JSON.stringify(formattedSchoolValue)" :size="200" />
+                      <qriously :value="JSON.stringify(formattedSchoolValue)" class="mx-auto":size="320" />
                     </v-card>
                   </v-dialog>
                 </v-card-actions>
