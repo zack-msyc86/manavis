@@ -149,7 +149,7 @@
             <v-card>
               <v-card-title>スタッフ用メニュー</v-card-title>
               <v-card-text v-if="password != 12317">
-                <v-text-field v-model="password"></v-text-field>
+                <v-text-field v-model="password" autofocus></v-text-field>
               </v-card-text>
               <div v-else>
                 <v-card-text >
@@ -165,7 +165,7 @@
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
                 </v-card-actions>
                 <v-card-text>
-                  <v-data-table :items="schoolNames.map(sn => ({name: sn}))" headers="[{ text: 'Name', value: 'name'}, { text: 'Menu', value: 'menu'}]">
+                  <v-data-table :items="schoolNames.map(sn => ({name: sn}))" headers="schoolTableHeaders">
                     <template v-slot:[`item.menu`]="{item}">
                       <v-icon @click="deleteSchool(item.name)">mdi-minus</v-icon>
                     </template>
@@ -195,6 +195,7 @@
             password: "",
             schoolName: "",
             schoolNames: [],
+            schoolTableHeaders: [{ text: 'Name', value: 'name'}, { text: 'Menu', value: 'menu'}],
             studentID: "",
             commonTest: {
               subjects: [
