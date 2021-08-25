@@ -29,7 +29,8 @@
                       <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
-                      <qriously :value="`https://zack-msyc86.github.io/manavis/?school=${encodeURI(JSON.stringify(formattedSchoolValue))}`" class="mx-auto":size="320" />
+                      <qriously :value="`https://zack-msyc86.github.io/manavis/?school=${encodeURI(JSON.stringify(formattedSchoolValue))}`" class="mx-auto":size="320" ></qriously>
+                      {{`https://zack-msyc86.github.io/manavis/?school=${encodeURIComponent(JSON.stringify(formattedSchoolValue))}`}}
                     </v-card>
                   </v-dialog>
                 </v-card-actions>
@@ -383,8 +384,10 @@
         },
         created(){
           this.updateSchoolNames()
+          console.log(getUrlQueries())
           const importData = getUrlQueries().school
           if(!!importData){
+            console.log(importData)
             data = JSON.parse(importData)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
               this.db.schools.put(data)
@@ -407,7 +410,7 @@
         queryStr.split('&').forEach(function(queryStr) {
           // = で分割してkey,valueをオブジェクトに格納
           var queryArr = queryStr.split('=');
-          queries[queryArr[0]] = queryArr[1];
+          queries[queryArr[0]] = decodeURIComponent(queryArr[1]);
         });
 
         return queries;
