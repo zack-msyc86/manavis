@@ -165,7 +165,7 @@
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
                 </v-card-actions>
                 <v-card-text>
-                  <v-data-table :items="schoolNames.map(sn => ({name: sn}))" headers="schoolTableHeaders">
+                  <v-data-table :items="schoolNames.map(sn => ({name: sn}))" :headers="schoolTableHeaders">
                     <template v-slot:[`item.menu`]="{item}">
                       <v-icon @click="deleteSchool(item.name)">mdi-minus</v-icon>
                     </template>
