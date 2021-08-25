@@ -387,10 +387,12 @@
           const importData = getUrlQueries().school
           if(!!importData){
             data = JSON.parse(importData)
+            console.log(data)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
               this.db.schools.put(data)
               this.updateSchoolNames()
               alert(`${data.name}を読み込みました`)
+              window.location.href = getPathFromUrl(document.location.href)
             }
           }
         }
@@ -413,6 +415,11 @@
         });
 
         return queries;
+      }
+
+      
+      function getPathFromUrl(url) {
+        return url.split(/[?#]/)[0];
       }
     </script>
   </body>
