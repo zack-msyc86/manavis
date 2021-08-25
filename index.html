@@ -29,7 +29,7 @@
                       <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
-                      <qriously :value="formattedSchoolValue" :size="200" />
+                      <qriously :value="JSON.stringify(formattedSchoolValue)" :size="200" />
                     </v-card>
                   </v-dialog>
                 </v-card-actions>
