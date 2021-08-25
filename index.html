@@ -387,7 +387,7 @@
           const importData = getUrlQueries().school
           if(!!importData){
             data = JSON.parse(importData)
-            console.log(data)
+            console.log(this.schoolNames, data.name)
             if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
               this.db.schools.put(data).then(() => {
                 this.updateSchoolNames()
