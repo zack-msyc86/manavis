@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script src="https://unpkg.com/dexie@3.0.2/dist/dexie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-qriously@1.1.1/dist/vue-qriously.min.js"></script>
     <div id="app">
     　<v-app>
         <v-container>
@@ -23,6 +24,14 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
+                  <v-dialog>
+                    <template v-slot:activator="{on, attr}">
+                      <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
+                    </template>
+                    <v-card>
+                      <qriously :value="formattedSchoolValue" :size="200" />
+                    </v-card>
+                  </v-dialog>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -187,6 +196,7 @@
         students: 'id',
         schools: 'name'
       })
+      Vue.use(window['vue-qriously']);
       const app = new Vue({
         el: '#app',
         vuetify: new Vuetify(),
@@ -296,17 +306,7 @@
               alert("学校名が空です")
               return
             }
-            this.db.schools.put({
-              name: this.schoolName,
-              commonTest: {
-                subjects: this.commonTest.subjects,
-                border: this.commonTest.border
-              },
-              secondTest: {
-                subjects: this.secondTest.subjects.map(s => ({ name: s.name, point: s.point})),
-                previousData: this.secondTest.previousData
-              }
-            })
+            this.db.schools.put(this.formattedSchoolValue)
             this.db.schools.get(this.schoolName, s => console.log(s))
             this.updateSchoolNames()
             this.notice(`${this.schoolName}を保存しました`)
@@ -367,11 +367,51 @@
           secondTestExpectedPointSum(){ return this.secondTest.subjects.reduce((sum, element) => sum + Number(element.expectedPoint), 0) },
           commonTestBorderPoint(){ return this.commonTestPointSum*this.commonTest.border/100 },
           requiredSecondTestPoint(){ return this.secondTest.previousData.average - this.commonTest.expectedPoint },
+          formattedSchoolValue(){
+            return {
+              name: this.schoolName,
+              commonTest: {
+                subjects: this.commonTest.subjects,
+                border: this.commonTest.border
+              },
+              secondTest: {
+                subjects: this.secondTest.subjects.map(s => ({ name: s.name, point: s.point})),
+                previousData: this.secondTest.previousData
+              }
+            }
+          }
         },
         created(){
           this.updateSchoolNames()
+          const importData = getUrlQueries().school
+          if(!!importData){
+            data = JSON.parse(importData)
+            if(!this.schoolNames.includes(data.name) || confirm(`${data.name}を上書きしてもよろしいですか？`)){
+              this.db.schools.put(data)
+              alert(`${data.name}を読み込みました`)
+            }
+          }
         }
       });
+
+      function getUrlQueries() {
+        var queryStr = window.location.search.slice(1);  // 文頭?を除外
+            queries = {};
+
+        // クエリがない場合は空のオブジェクトを返す
+        if (!queryStr) {
+          return queries;
+        }
+
+        // クエリ文字列を & で分割して処理
+        queryStr.split('&').forEach(function(queryStr) {
+          // = で分割してkey,valueをオブジェクトに格納
+          var queryArr = queryStr.split('=');
+          queries[queryArr[0]] = queryArr[1];
+        });
+
+        return queries;
+      }
     </script>
   </body>
 </html>
