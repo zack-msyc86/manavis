@@ -24,13 +24,12 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
-                  <v-dialog width="340">
+                  <v-dialog width="320">
                     <template v-slot:activator="{on, attr}">
                       <v-btn v-on="on" v-bind="attr" class="mx-auto" :disabled="schoolName == ''">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
                       <qriously :value="`https://zack-msyc86.github.io/manavis/?school=${encodeURI(JSON.stringify(formattedSchoolValue))}`" class="mx-auto":size="320" ></qriously>
-                      {{`https://zack-msyc86.github.io/manavis/?school=${encodeURIComponent(JSON.stringify(formattedSchoolValue))}`}}
                     </v-card>
                   </v-dialog>
                 </v-card-actions>
@@ -147,6 +146,12 @@
                   <p>
                     マナビス生番号を入れて保存すると、生徒固有の配点戦略とメモ、学校情報の両方が保存される。
                     マナビス生番号を入れて読み出すと、生徒固有の配点戦略とメモ、学校情報の両方が読み出される。
+                  </p>
+                </v-card-text>
+                <v-card-text>
+                  <p>
+                    学校情報のエクスポートを押すと、QRコードが出てくる。
+                    これを読み込むと、他の端末で同じ学校情報を扱える。
                   </p>
                 </v-card-text>
               </v-card>
