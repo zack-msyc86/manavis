@@ -354,7 +354,7 @@
             })
             this.notice(`${this.studentID}を読み出しました`)
           },
-          importSchoolData(){
+          async importSchoolData(){
             const importData = getUrlQueries().school
             if(!!importData){
               data = JSON.parse(importData)
