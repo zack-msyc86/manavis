@@ -29,7 +29,7 @@
                       <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
-                      <qriously :value="JSON.stringify(formattedSchoolValue)" class="mx-auto":size="320" />
+                      <qriously :value="`https://zack-msyc86.github.io/manavis/?school=${encodeURI(JSON.stringify(formattedSchoolValue))}`" class="mx-auto":size="320" />
                     </v-card>
                   </v-dialog>
                 </v-card-actions>
