@@ -26,7 +26,7 @@
                   <v-btn class="mx-auto" @click="loadSchool">学校情報の読み出し</v-btn>
                   <v-dialog width="340">
                     <template v-slot:activator="{on, attr}">
-                      <v-btn v-on="on" v-bind="attr" class="mx-auto">学校情報のエクスポート</v-btn>
+                      <v-btn v-on="on" v-bind="attr" class="mx-auto" :disabled="schoolName == ''">学校情報のエクスポート</v-btn>
                     </template>
                     <v-card>
                       <qriously :value="`https://zack-msyc86.github.io/manavis/?school=${encodeURI(JSON.stringify(formattedSchoolValue))}`" class="mx-auto":size="320" ></qriously>
