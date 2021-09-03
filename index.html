@@ -58,7 +58,7 @@
                 <v-card-title>共通テスト</v-card-title>
                 <v-card-text>
                   <p>合計: {{commonTestPointSum}}点</p>
-                  <v-data-table :items="commonTest.subjects" :headers="subjectsHeaders">
+                  <v-data-table disable-pagination mobile-breakpoint="0" :items="commonTest.subjects" :headers="subjectsHeaders">
                     <template v-slot:[`item.menu`]="{ item }">
                       <v-icon @click="editCommonTestSubject(item)">mdi-pencil</v-icon>
                       <v-icon @click="deleteCommonTestSubject(item)">mdi-minus</v-icon>
@@ -88,7 +88,7 @@
                 <v-card-title>二次試験</v-card-title>
                 <v-card-text>
                   <p>合計: {{secondTestPointSum}}点</p>
-                  <v-data-table :items="secondTest.subjects" :headers="subjectsHeaders">
+                  <v-data-table disable-pagination mobile-breakpoint="0" :items="secondTest.subjects" :headers="subjectsHeaders">
                     <template v-slot:[`item.menu`]="{ item }">
                       <v-icon @click="editSecondTestSubject(item)">mdi-pencil</v-icon>
                       <v-icon @click="deleteSecondTestSubject(item)">mdi-minus</v-icon>
@@ -181,7 +181,7 @@
                 </v-card-actions>
                 <v-card-subtitle>行をクリックして読み出し</v-card-subtitle>
                 <v-card-text>
-                  <v-data-table :items="schoolNames.map(sn => ({name: sn}))" :headers="schoolTableHeaders" @click:row="loadSchoolByTable">
+                  <v-data-table disable-pagination mobile-breakpoint="0" :items="schoolNames.map(sn => ({name: sn}))" :headers="schoolTableHeaders" @click:row="loadSchoolByTable">
                     <template v-slot:[`item.menu`]="{item}">
                       <v-icon @click.stop="deleteSchool(item.name)">mdi-minus</v-icon>
                     </template>
